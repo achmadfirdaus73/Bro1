@@ -1,3 +1,5 @@
+import bcrypt from 'bcryptjs';
+
 // ============================================
 // DATE HELPERS (Indonesian Format)
 // ============================================
@@ -253,4 +255,32 @@ export function getAuthErrorMessage(code: string): string {
     'auth/weak-password': 'Password terlalu lemah.',
   };
   return messages[code] || 'Terjadi kesalahan.';
+}
+
+// ============================================
+// AUTH & JSON HELPERS (TAMBAHAN BIAR GAK ERROR)
+// ============================================
+
+export async function hashPassword(password: string): Promise<string> {
+  return await bcrypt.hash(password, 10);
+}
+
+export async function verifyPassword(password: string, hashed: string): Promise<boolean> {
+  return await bcrypt.compare(password, hashed);
+}
+
+export function parseJsonField(field: any) {
+  if (!field) return null;
+  if (typeof field === 'object') return field;
+  try {
+    return JSON.parse(field);
+  } catch (e) {
+    return field;
+  }
+}
+
+export function serializeJsonField(field: any) {
+  if (!field) return null;
+  if (typeof field === 'string') return field;
+  return JSON.stringify(field);
 }
